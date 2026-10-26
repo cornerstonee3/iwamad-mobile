@@ -1,10 +1,22 @@
+// Импортируем хук useState из react
+import { useState } from 'react'; 
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Pressable } from 'react-native'; 
 
 export default function App() {
+  const [likes, setLikes] = useState(0);
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+      <Text style={styles.text}>Hello, World!</Text>
+      <Text style={styles.text}>Amanbol Moldash</Text>
+     
+      <Text style={styles.likesText}>Likes: {likes}</Text>
+
+      <Pressable onPress={() => setLikes(likes + 1)} style={styles.button}>
+        <Text style={styles.buttonText}>Like</Text>
+      </Pressable>
+
       <StatusBar style="auto" />
     </View>
   );
@@ -16,5 +28,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  text: {
+    fontSize: 32,
+  },
+  likesText: {
+    fontSize: 24,
+    marginTop: 30,
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: '#007AFF', 
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
