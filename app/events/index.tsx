@@ -3,20 +3,13 @@ import { FlatList, View, Text, TextInput, StyleSheet, ActivityIndicator, Pressab
 import { router } from 'expo-router';
 import EventRow from '../../src/components/EventRow';
 import { useEvents } from '../../src/hooks/useEvents';
+import { useSavedIds } from '../../src/hooks/useSavedIds';
 
 export default function EventsScreen() {
-  const [savedIds, setSavedIds] = useState<number[]>([]);
   const [searchText, setSearchText] = useState('');
 
   const { data, isPending, isError, error, refetch, isRefetching } = useEvents();
-
-  const toggleSave = (id: number) => {
-    if (savedIds.includes(id)) {
-      setSavedIds(savedIds.filter(savedId => savedId !== id));
-    } else {
-      setSavedIds([...savedIds, id]);
-    }
-  };
+  const { savedIds, toggleSaved } = useSavedIds();
 
   if (isPending) {
     return (
@@ -62,7 +55,7 @@ export default function EventsScreen() {
           <EventRow 
             event={item} 
             onPress={() => router.push(`/events/${item.id}`)} 
-            onLongPress={() => toggleSave(item.id)}
+            onLongPress={() => toggleSaved(item.id)}
             isSaved={savedIds.includes(item.id)}
           />
         )}
