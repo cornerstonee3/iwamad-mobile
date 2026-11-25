@@ -1,0 +1,90 @@
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { Stack, useLocalSearchParams } from 'expo-router';
+import ChatPanel from '../../src/components/ChatPanel';
+import HolidayNote from '../../src/components/HolidayNote';
+import { useEvents } from '../../src/hooks/useEvents';
+
+export default function EventDetailsScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const { data, isPending, isError, error, refetch } = useEvents();
+
+  if (isPending) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text style={styles.statusText}>Loading events.</Text>
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorTitle}>Could not load events</Text>
+        <Text style={styles.statusText}>{error?.message}</Text>
+        <Pressable style={styles.retryButton} onPress={() => refetch()}>
+          <Text style={styles.retryText}>Try again</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  const event = data?.find((item) => item.id === Number(id));
+
+  if (!event) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorTitle}>Event not found</Text>
+        <Text>No event with id {id}.</Text>
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
+      <Stack.Screen options={{ title: event.title }} />
+      <Text style={styles.title}>{event.title}</Text>
+      <Text style={styles.text}>Date: {event.date}</Text>
+      <HolidayNote date={event.date} />
+      <Text style={styles.text}>Place: {event.place}</Text>
+      <Text style={styles.text}>Seats: {event.seats}</Text>
+      <ChatPanel eventId={event.id} eventTitle={event.title} />
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  scroll: { flex: 1, backgroundColor: '#fff' },
+  container: { padding: 20, backgroundColor: '#fff' },
+  centerContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 15 },
+  text: { fontSize: 16, marginBottom: 8 },
+  errorTitle: { fontSize: 22, fontWeight: 'bold', color: 'red', marginBottom: 10 },
+  statusText: { marginTop: 10, fontSize: 16 },
+  retryButton: {
+    marginTop: 20,
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  retryText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+});
