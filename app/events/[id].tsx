@@ -1,7 +1,15 @@
-import { View, Text, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
-import { useLocalSearchParams, Stack } from 'expo-router';
-import { useEvents } from '../../src/hooks/useEvents';
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { Stack, useLocalSearchParams } from 'expo-router';
+import ChatPanel from '../../src/components/ChatPanel';
 import HolidayNote from '../../src/components/HolidayNote';
+import { useEvents } from '../../src/hooks/useEvents';
 
 export default function EventDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -40,25 +48,43 @@ export default function EventDetailsScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
       <Stack.Screen options={{ title: event.title }} />
       <Text style={styles.title}>{event.title}</Text>
-      <Text style={styles.text}>Date: {event.date}</Text>
       <Text style={styles.text}>Date: {event.date}</Text>
       <HolidayNote date={event.date} />
       <Text style={styles.text}>Place: {event.place}</Text>
       <Text style={styles.text}>Seats: {event.seats}</Text>
-    </View>
+      <ChatPanel eventId={event.id} eventTitle={event.title} />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  centerContainer: { flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', padding: 20 },
+  scroll: { flex: 1, backgroundColor: '#fff' },
+  container: { padding: 20, backgroundColor: '#fff' },
+  centerContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 15 },
   text: { fontSize: 16, marginBottom: 8 },
   errorTitle: { fontSize: 22, fontWeight: 'bold', color: 'red', marginBottom: 10 },
   statusText: { marginTop: 10, fontSize: 16 },
-  retryButton: { marginTop: 20, backgroundColor: '#007AFF', paddingHorizontal: 20, borderRadius: 8, minHeight: 44, justifyContent: 'center' },
-  retryText: { color: '#fff', fontSize: 16, fontWeight: 'bold' }
+  retryButton: {
+    marginTop: 20,
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  retryText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
 });
